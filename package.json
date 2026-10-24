@@ -1,0 +1,26 @@
+{
+  "name": "event-ticketing-dapp",
+  "version": "2.0.0",
+  "description": "On-chain event ticketing for Avalanche: multi-event smart contract (Hardhat) and React dApp (Vite).",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "test:gas": "REPORT_GAS=true hardhat test",
+    "coverage": "hardhat coverage",
+    "node": "hardhat node",
+    "deploy:local": "hardhat run scripts/deploy.js --network localhost",
+    "seed:local": "hardhat run scripts/seed.js --network localhost",
+    "deploy:fuji": "hardhat run scripts/deploy.js --network fuji",
+    "seed:fuji": "hardhat run scripts/seed.js --network fuji",
+    "frontend:install": "npm --prefix frontend install",
+    "dev": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "dotenv": "^16.4.5",
+    "hardhat": "^2.22.17"
+  }
+}

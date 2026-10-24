@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper: #e7ecf0;
+  --color-card: #f7f9fa;
+  --color-ink: #0d1b2a;
+  --color-ink-soft: #1b2b3f;
+  --color-muted: #566678;
+  --color-line: #bfcad5;
+  --color-avax: #c9282b;
+  --color-avax-bright: #e84142;
+  --color-ok: #1b7f55;
+  --color-warn: #9a5b00;
+
+  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Instrument Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+@layer base {
+  html {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    min-height: 100vh;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  dialog::backdrop {
+    background: rgb(13 27 42 / 0.55);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Dashed tear line with half-circle notches, used on ticket stubs */
+.tear {
+  position: relative;
+  border-top: 2px dashed var(--color-line);
+}
+.tear::before,
+.tear::after {
+  content: "";
+  position: absolute;
+  top: -11px;
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  background: var(--color-paper);
+  border: 1px solid var(--color-line);
+}
+.tear::before {
+  left: -11px;
+}
+.tear::after {
+  right: -11px;
+}
+.tear-dark {
+  border-top-color: rgb(231 236 240 / 0.28);
+}
+.tear-dark::before,
+.tear-dark::after {
+  border-color: var(--color-ink);
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.toast-in {
+  animation: toast-in 180ms ease-out;
+}
