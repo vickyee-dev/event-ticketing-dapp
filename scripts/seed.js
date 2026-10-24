@@ -10,7 +10,7 @@ const DEPLOYMENTS_FILE = path.join(
   "frontend",
   "src",
   "contracts",
-  "deployments.json"
+  "deployments.json",
 );
 
 const DAY = 24 * 60 * 60;
@@ -24,12 +24,18 @@ async function main() {
     : {};
   const entry = deployments[chainId];
   if (!entry) {
-    throw new Error(`No deployment for chain ${chainId}. Run the deploy script first.`);
+    throw new Error(
+      `No deployment for chain ${chainId}. Run the deploy script first.`,
+    );
   }
 
   const signers = await ethers.getSigners();
   const organizer = signers[0];
-  const contract = await ethers.getContractAt("EventTicketing", entry.address, organizer);
+  const contract = await ethers.getContractAt(
+    "EventTicketing",
+    entry.address,
+    organizer,
+  );
 
   const latest = await ethers.provider.getBlock("latest");
   const now = latest.timestamp;
@@ -68,7 +74,7 @@ async function main() {
       e.startTime,
       e.price,
       e.capacity,
-      e.maxPerWallet
+      e.maxPerWallet,
     );
     await tx.wait();
     console.log(`Created: ${e.name}`);
@@ -83,10 +89,11 @@ async function main() {
       { signer: signers[3], eventId: firstId + 2, qty: 1 },
     ];
     for (const b of buys) {
-      const ev = await contract.getEvent(b.eventId);
+      // const ev = await contract.getEvent(b.eventId);
+      const event = await contract["getEvent(uint256)"](b.eventId);
       const tx = await contract
         .connect(b.signer)
-        .buyTickets(b.eventId, b.qty, { value: ev.price * BigInt(b.qty) });
+        .buyTickets(b.eventId, b.qty, { value: event.price * BigInt(b.qty) });
       await tx.wait();
     }
     console.log("Simulated a few ticket purchases from other accounts.");

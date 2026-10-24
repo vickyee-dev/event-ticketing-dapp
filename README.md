@@ -8,9 +8,28 @@ It is a ground-up rebuild of the original single-event prototype. See [What chan
 - **Frontend:** React 19, Vite, Tailwind CSS 4, ethers v6
 - **Network:** Avalanche Fuji testnet by default (also works on a local Hardhat node and C-Chain mainnet)
 
+## Screenshots
+
+### Dashboard
+
+![Gatepass Dashboard](dashboard.png)
+
+### Event Organization
+
+![Organize Events](organize.png)
+
+### Tickets
+
+![Tickets Page](tickets-page.png)
+
+### Ticket Details
+
+![Ticket View](tickets.png)
+
 ## Features
 
 **For attendees**
+
 - Browse every event with live availability, countdowns and per-wallet limits
 - Buy several tickets in one transaction
 - See your tickets with a QR code, status (valid, used, cancelled) and event details
@@ -18,12 +37,14 @@ It is a ground-up rebuild of the original single-event prototype. See [What chan
 - Claim a full refund when an organizer cancels
 
 **For organizers**
+
 - Create events with a price (or free), capacity, start time and per-wallet limit
 - Cancel an event before it starts
 - Withdraw proceeds once the event has started
 - Check tickets in at the door, and approve extra "door staff" wallets to do the same
 
 **Under the hood**
+
 - Wallet connect with network detection and one-click switch/add for Avalanche chains
 - Read-only browsing works without a wallet (public RPC)
 - Friendly transaction flow: one toast follows each action from wallet prompt to confirmation, with a block explorer link
@@ -53,18 +74,18 @@ It is a ground-up rebuild of the original single-event prototype. See [What chan
 
 `contracts/EventTicketing.sol`
 
-| Function | Who | What it does |
-| --- | --- | --- |
-| `createEvent(name, venue, startTime, price, capacity, maxPerWallet)` | anyone | Creates an event; caller becomes organizer |
-| `buyTickets(eventId, quantity)` | anyone | Mints tickets; `msg.value` must equal `price x quantity` exactly |
-| `transferTicket(ticketId, to)` | ticket owner | Moves an unused ticket to another wallet |
-| `refund(ticketId)` | ticket owner | Burns the ticket and returns its price (cancelled events only) |
-| `cancelEvent(eventId)` | organizer | Cancels before the start time |
-| `withdrawProceeds(eventId)` | organizer | Pays out escrow after the event has started |
-| `setScanner(eventId, scanner, allowed)` | organizer | Approves or revokes door staff |
-| `checkIn(ticketId)` | organizer or scanner | Marks a ticket as used (once) |
-| `getEvent`, `getEvents(offset, limit)`, `getTicket`, `ticketsOf(owner)` | anyone | Read helpers |
-| `eventCount`, `ticketCount`, `escrow`, `purchased`, `isScanner` | anyone | Public state getters |
+| Function                                                                | Who                  | What it does                                                     |
+| ----------------------------------------------------------------------- | -------------------- | ---------------------------------------------------------------- |
+| `createEvent(name, venue, startTime, price, capacity, maxPerWallet)`    | anyone               | Creates an event; caller becomes organizer                       |
+| `buyTickets(eventId, quantity)`                                         | anyone               | Mints tickets; `msg.value` must equal `price x quantity` exactly |
+| `transferTicket(ticketId, to)`                                          | ticket owner         | Moves an unused ticket to another wallet                         |
+| `refund(ticketId)`                                                      | ticket owner         | Burns the ticket and returns its price (cancelled events only)   |
+| `cancelEvent(eventId)`                                                  | organizer            | Cancels before the start time                                    |
+| `withdrawProceeds(eventId)`                                             | organizer            | Pays out escrow after the event has started                      |
+| `setScanner(eventId, scanner, allowed)`                                 | organizer            | Approves or revokes door staff                                   |
+| `checkIn(ticketId)`                                                     | organizer or scanner | Marks a ticket as used (once)                                    |
+| `getEvent`, `getEvents(offset, limit)`, `getTicket`, `ticketsOf(owner)` | anyone               | Read helpers                                                     |
+| `eventCount`, `ticketCount`, `escrow`, `purchased`, `isScanner`         | anyone               | Public state getters                                             |
 
 Events emitted: `EventCreated`, `TicketsPurchased`, `TicketTransferred`, `TicketCheckedIn`, `EventCancelled`, `TicketRefunded`, `ProceedsWithdrawn`, `ScannerUpdated`.
 
@@ -73,7 +94,7 @@ Events emitted: `EventCreated`, `TicketsPurchased`, `TicketTransferred`, `Ticket
 - Funds are escrowed per event and only released under the rules above; there is no admin or owner key that can touch them.
 - Withdrawals and refunds update state **before** sending funds and are protected by a reentrancy guard.
 - Exact-payment check on purchases (no overpayment or silent change handling).
-- Per-wallet limits apply to *purchases*, so a wallet can't free up allowance by transferring tickets away and buying more. Transfers themselves are not limited.
+- Per-wallet limits apply to _purchases_, so a wallet can't free up allowance by transferring tickets away and buying more. Transfers themselves are not limited.
 - Custom errors instead of revert strings (cheaper and easy to decode).
 
 This is a learning and portfolio project. It has not been professionally audited. Do not use it with significant real funds without an audit.
@@ -168,26 +189,28 @@ Deploy `frontend/dist` to any static host. On Vercel, set the root directory to 
 
 ## Configuration
 
-| Variable | Where | Default | Purpose |
-| --- | --- | --- | --- |
-| `PRIVATE_KEY` | root `.env` | none | Deployer key for Fuji/mainnet. Use a throwaway key. |
-| `FUJI_RPC_URL` | root `.env` | public Fuji RPC | Override the RPC used for deployment |
-| `AVALANCHE_RPC_URL` | root `.env` | public C-Chain RPC | Override the RPC for mainnet deployment |
-| `VITE_CHAIN_ID` | `frontend/.env` | `43113` | `43113` Fuji, `43114` C-Chain, `31337` local |
-| `VITE_CONTRACT_ADDRESS` | `frontend/.env` | from `deployments.json` | Contract to talk to |
-| `VITE_RPC_URL` | `frontend/.env` | chain default | Read-only RPC used before a wallet connects |
+| Variable                | Where           | Default                 | Purpose                                             |
+| ----------------------- | --------------- | ----------------------- | --------------------------------------------------- |
+| `PRIVATE_KEY`           | root `.env`     | none                    | Deployer key for Fuji/mainnet. Use a throwaway key. |
+| `FUJI_RPC_URL`          | root `.env`     | public Fuji RPC         | Override the RPC used for deployment                |
+| `AVALANCHE_RPC_URL`     | root `.env`     | public C-Chain RPC      | Override the RPC for mainnet deployment             |
+| `VITE_CHAIN_ID`         | `frontend/.env` | `43113`                 | `43113` Fuji, `43114` C-Chain, `31337` local        |
+| `VITE_CONTRACT_ADDRESS` | `frontend/.env` | from `deployments.json` | Contract to talk to                                 |
+| `VITE_RPC_URL`          | `frontend/.env` | chain default           | Read-only RPC used before a wallet connects         |
 
 Chain details (RPC URLs, explorers, faucet) live in `frontend/src/lib/chains.js`. The app name is a single constant in `frontend/src/lib/config.js`.
 
 ## Using the app
 
 **As an attendee**
+
 1. Open the Events tab. You can browse without a wallet.
 2. Connect your wallet; if it is on another network, use the "Switch" button in the header.
 3. Pick a quantity and press Buy. Confirm in your wallet.
 4. Find your tickets under My tickets. Use Transfer to send one to a friend.
 
 **As an organizer**
+
 1. Open Organize and press Create event.
 2. Share the Events page with attendees.
 3. On the day, use Check in a ticket (enter the number shown under the attendee's QR code). Add door staff wallets with Door staff on each event.
@@ -197,19 +220,19 @@ Chain details (RPC URLs, explorers, faucet) live in `frontend/src/lib/chains.js`
 
 The original project was a good first prototype, but it had problems that made it unsafe or broken. The rebuild fixes them:
 
-| v1 | v2 |
-| --- | --- |
-| `withdraw()` had **no access control**, so anyone could drain the contract | Funds are escrowed per event; only the organizer can withdraw, only after the event starts, never if cancelled |
-| One hard-coded event, price and capacity | Any number of events, each with its own price, capacity, start time and limits |
-| Contract capacity was 1000, UI showed 100 | Capacity comes from the contract and is shown consistently |
-| Ticket list for the UI was kept in `localStorage`, so it was per-browser and wiped on disconnect | All state is read from the chain; tickets follow the wallet on any device |
-| `BuyTicket.jsx` / `TicketList.jsx` used ethers v5 `ethers.utils.*` with ethers v6 installed, and were unused | One consistent ethers v6 code path; no dead components |
-| `getSimpleTicketInfo` and `getUserTickets` were missing from the frontend ABI | ABI covers the whole contract and decodes custom errors |
-| `hardhat.config.js` generated a **random wallet and printed its private key on every run** | Deployer key comes from `.env`; nothing is generated or logged |
-| Leftover Hardhat sample files (`Lock.sol` tests/ignition, sample README) | Removed; real tests for the real contract |
-| No refunds, transfers, check-in or cancellation | All four are implemented and tested |
-| Tickets could not be verified at the door | Check-in with organizer/scanner permissions and QR codes |
-| Alert dialogs for every message | Toasts that follow each transaction, with explorer links and plain-language errors |
+| v1                                                                                                           | v2                                                                                                             |
+| ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
+| `withdraw()` had **no access control**, so anyone could drain the contract                                   | Funds are escrowed per event; only the organizer can withdraw, only after the event starts, never if cancelled |
+| One hard-coded event, price and capacity                                                                     | Any number of events, each with its own price, capacity, start time and limits                                 |
+| Contract capacity was 1000, UI showed 100                                                                    | Capacity comes from the contract and is shown consistently                                                     |
+| Ticket list for the UI was kept in `localStorage`, so it was per-browser and wiped on disconnect             | All state is read from the chain; tickets follow the wallet on any device                                      |
+| `BuyTicket.jsx` / `TicketList.jsx` used ethers v5 `ethers.utils.*` with ethers v6 installed, and were unused | One consistent ethers v6 code path; no dead components                                                         |
+| `getSimpleTicketInfo` and `getUserTickets` were missing from the frontend ABI                                | ABI covers the whole contract and decodes custom errors                                                        |
+| `hardhat.config.js` generated a **random wallet and printed its private key on every run**                   | Deployer key comes from `.env`; nothing is generated or logged                                                 |
+| Leftover Hardhat sample files (`Lock.sol` tests/ignition, sample README)                                     | Removed; real tests for the real contract                                                                      |
+| No refunds, transfers, check-in or cancellation                                                              | All four are implemented and tested                                                                            |
+| Tickets could not be verified at the door                                                                    | Check-in with organizer/scanner permissions and QR codes                                                       |
+| Alert dialogs for every message                                                                              | Toasts that follow each transaction, with explorer links and plain-language errors                             |
 
 ## Design decisions and limitations
 
